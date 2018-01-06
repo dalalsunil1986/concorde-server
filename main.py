@@ -2,6 +2,7 @@ from flask import Flask, request
 from flask_restful import Resource, Api, reqparse
 from utils import log, to_json, from_json
 import copy
+import time
 
 DB_FLIGHTS_FILENAME="db/flights.json"
 DB_USERS_FILENAME="db/users.json"
@@ -26,6 +27,7 @@ class Flights(Resource):
     def post(self):
         args = parser.parse_args()
         id = 1 if len(flights) is 0 else int(max(flights.keys())) + 1
+        print(args)
         flight = from_json(args["flight"])
         print(flight)
         print(id)
@@ -36,6 +38,7 @@ class Flights(Resource):
         return flight #to_json(flight)
 
     def delete(self):
+        time.sleep(5)
         args = parser.parse_args()
         flight = from_json(args["flight"])
         if flight["id"] in flights.keys():
@@ -66,10 +69,13 @@ class Users(Resource):
         user = from_json(args["user"])
         if (not "id" in user.keys()) or (user["id"] <= 0):
             user["id"] = id
+        if not "isIbis" in user.keys():
+            user["isIbis"] = False
         for u in users.values():
             if u["username"] == user["username"]:
                 return u
-        users[user["id"]] = user
+        users[user["id"]] = copy.deepcopy(user)
+        user["password"] = ""
         self.save()
         return user
 
