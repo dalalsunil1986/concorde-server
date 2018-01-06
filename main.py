@@ -38,7 +38,7 @@ class Flights(Resource):
         return flight #to_json(flight)
 
     def delete(self):
-        time.sleep(5)
+        # time.sleep(5)
         args = parser.parse_args()
         flight = from_json(args["flight"])
         if flight["id"] in flights.keys():
@@ -53,7 +53,6 @@ class Users(Resource):
 
     def get(self):
         args = parser.parse_args()
-        print(args)
         username = args["username"]
         password = args["password"]
         for u in users.values():
